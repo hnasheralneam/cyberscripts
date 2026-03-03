@@ -48,19 +48,9 @@ iptables -A INPUT -p icmp -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80  -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 
-# Time sync (NTP)
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+#ISTS Only
+iptables -A OUTPUT -p tcp --dport 514  -j ACCEPT
 
-#LDAP
-iptables -A OUTPUT -p udp --dport 389 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 389 -j ACCEPT
-
-# LDAPS
-iptables -A OUTPUT -p tcp --dport 636 -j ACCEPT
-
-# Kerberos
-iptables -A OUTPUT -p udp --dport 88 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 88 -j ACCEPT
 # --------------------------------------------------
 # DHCP (only if interface is using it)
 # --------------------------------------------------
@@ -85,9 +75,17 @@ iptables -P FORWARD DROP
 iptables -A INPUT  -m conntrack --ctstate INVALID -j DROP
 iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
 
+#v6
+sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
 ip6tables -P INPUT DROP
 ip6tables -P OUTPUT DROP
 ip6tables -P FORWARD DROP
+
+echo "[*] Saving iptable rules across reboot..."
+
+iptables-save -f /etc/iptables/iptables.rules
+ip6tables-save -f /etc/iptables/ip6tables.rules
 
 echo "[✓] Firewall locked down successfully."

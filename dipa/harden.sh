@@ -1,27 +1,34 @@
 #!/bin/sh
+# Harden automatic v0.0.1
+
+# Enforce root
 if ! [ $(id -u) = 0 ]; then
    echo "Rerun with sudo"
    exit 1
 fi
 
+# Backup important files before modification
 printf "Backing up passwd and shadow"
-cp /etc/passwd /etc/passwd-o
-cp /etc/shadow /etc/shadow-o
+cp /etc/passwd /etc/.passwd
+cp /etc/shadow /etc/.shadow
 printf " [DONE]\n"
 
-# Sets all users to login
+# Set all user shells to /bin/false, preventing login
 sed -ri 's@(:[^:]*$)@:/bin/false@' /etc/passwd
+
 # Add blueteam user
 useradd bluey -m
 printf "Added bluey\n"
+
 if getent group wheel >/dev/null; then 
    usermod -aG wheel bluey
 else
    usermod -aG sudo bluey
 fi
-printf "added to sudo\n"
-#usermod -s /bin/sh bluey
-#printf "changed shell\n"
+
+printf "Added to sudoers group\n"
+
+printf "Setting password for root user\n"
 chpasswd < /tmp/.pwd
 shred /tmp/.pwd
 shred /tmp/pass

@@ -9,8 +9,8 @@ Password: cyberdawgs4eva
 ```
 
 
-To-do:
-Remove duplicates
-Migrate away from Ansible
-WRITE BASELINING SCRIPT
-Seperate monitoring, minute-zero, and active scripts
+**To-do:**  
+Remove duplicates  
+Migrate away from Ansible  
+WRITE BASELINING SCRIPT (and harden script)  
+Seperate monitoring, minute-zero, and active scripts  
