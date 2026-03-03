@@ -1,0 +1,30 @@
+---
+- name: Deploy watchdawg script
+  hosts: vms
+  vars_files:
+    - secret
+  become: yes
+  hosts: all
+  tasks:
+    - name: Ensure tarket folder exists
+      file:
+        path: /etc/kernel
+        state: directory
+
+    - name: Copy over script
+      copy:
+        src: ../Scripts/watchdawg.sh
+        dest: /etc/kernel/watchdawg
+        mode: '0755'
+
+    - name: Copy over configuration
+      copy:
+        src: ../Scripts/watchdawg-sources
+        dest: /etc/kernel/watchdawg-sources
+
+    - name: Excute script
+      args:
+        chdir: /etc/kernel
+      shell: /etc/kernel/watchdawg init-state watchdawg-sources
+      async: 3000000
+      poll: 0

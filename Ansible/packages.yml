@@ -1,0 +1,11 @@
+---
+- name: Ensure necessary editors present
+  hosts: vms
+  vars_files:
+    - secret
+  become: yes
+  tasks:
+    - name: Ensure vim is installed
+      package:
+        name: vim
+        state: present

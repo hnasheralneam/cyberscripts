@@ -1,0 +1,198 @@
+---
+- name: Deploy Splunk Universal Forwarder
+  hosts: vms
+  become: yes
+  vars_files:
+    - secret
+  vars:
+    splunk_version: "10.2.0"
+    splunk_build: "d749cb17ea65"
+    splunk_home: "/opt/splunkforwarder"
+    download_dir: "/tmp"
+    splunk_gpg_key: "https://docs.splunk.com/images/6/6b/SplunkPGPKey.pub"
+    server_ip: 192.168.122.1
+
+  tasks:
+    - name: Ensure splunk group exists
+      group:
+        name: splunk
+        state: present
+
+    - name: Ensure splunk user exists
+      user:
+        name: splunk
+        group: splunk
+        shell: /bin/bash
+        system: yes
+        create_home: yes
+
+    - name: Set installer facts based on OS family
+      set_fact:
+        splunk_installer_file: >-
+          {% if ansible_os_family == "RedHat" %}splunkforwarder-{{ splunk_version }}-{{ splunk_build }}.x86_64.rpm{% elif ansible_os_family == "Debian" %}splunkforwarder-{{ splunk_version }}-{{ splunk_build }}-linux-amd64.deb{% else %}splunkforwarder-{{ splunk_version }}-{{ splunk_build }}-linux-amd64.tgz{% endif %}
+
+    - name: Construct Download URL
+      set_fact:
+        splunk_download_url: "https://download.splunk.com/products/universalforwarder/releases/{{ splunk_version }}/linux/{{ splunk_installer_file }}"
+
+    - name: Download Splunk Forwarder installer
+      get_url:
+        url: "{{ splunk_download_url }}"
+        dest: "{{ download_dir }}/{{ splunk_installer_file }}"
+        mode: '0644'
+
+    - name: Import Splunk GPG Key (RHEL only)
+      rpm_key:
+        key: "{{ splunk_gpg_key }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install via RPM (RHEL/CentOS)
+      yum:
+        name: "{{ download_dir }}/{{ splunk_installer_file }}"
+        state: present
+        disable_gpg_check: no
+      when: ansible_os_family == "RedHat"
+
+    - name: Install via DEB (Ubuntu/Debian)
+      apt:
+        deb: "{{ download_dir }}/{{ splunk_installer_file }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install via Tarball (Generic Linux)
+      unarchive:
+        src: "{{ download_dir }}/{{ splunk_installer_file }}"
+        dest: "/opt/"
+        remote_src: yes
+        owner: splunk
+        group: splunk
+        creates: "{{ splunk_home }}/bin/splunk"
+      when: ansible_os_family not in ["RedHat", "Debian"]
+
+    - name: Ensure Splunk directory ownership is correct
+      file:
+        path: "{{ splunk_home }}"
+        owner: splunk
+        group: splunk
+        state: directory
+        recurse: yes
+
+    - name: Create required Splunk directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: splunk
+        group: splunk
+        mode: '0755'
+      loop:
+        - "{{ splunk_home }}/var/log/splunk"
+        - "{{ splunk_home }}/var/run"
+        - "{{ splunk_home }}/var/lib/splunk"
+        - "{{ splunk_home }}/etc/system/local"
+
+    - name: Create user-seed.conf
+      copy:
+        dest: "{{ splunk_home }}/etc/system/local/user-seed.conf"
+        owner: splunk
+        group: splunk
+        mode: '0600'
+        content: |
+          [user_info]
+          USERNAME = admin
+          PASSWORD = {{ admin_password }}
+
+    - name: Configure forwarding via outputs.conf
+      copy:
+        dest: "{{ splunk_home }}/etc/system/local/outputs.conf"
+        owner: splunk
+        group: splunk
+        mode: '0600'
+        content: |
+          [tcpout]
+          defaultGroup = default-autolb-group
+          
+          [tcpout:default-autolb-group]
+          server = {{ server_ip }}:9997
+          
+          [tcpout-server://{{ server_ip }}:9997]
+
+    - name: Check if Splunk has been initialized
+      stat:
+        path: "{{ splunk_home }}/var/lib/splunk/kvstore"
+      register: splunk_initialized
+
+    - name: First-time Splunk startup to accept license and set password
+      shell: "sudo -u splunk {{ splunk_home }}/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd '{{ admin_password }}'"
+      when: not splunk_initialized.stat.exists
+      register: first_start
+      environment:
+        SPLUNK_HOME: "{{ splunk_home }}"
+
+    - name: Wait for Splunk to initialize
+      pause:
+        seconds: 20
+      when: first_start.changed
+
+    - name: Stop Splunk after first-time setup
+      shell: "sudo -u splunk {{ splunk_home }}/bin/splunk stop"
+      when: first_start.changed
+      environment:
+        SPLUNK_HOME: "{{ splunk_home }}"
+
+    - name: Wait for Splunk to fully stop
+      pause:
+        seconds: 10
+      when: first_start.changed
+
+    - name: Create systemd service file
+      copy:
+        dest: /etc/systemd/system/splunkforwarder.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Splunk Universal Forwarder
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=splunk
+          Group=splunk
+          ExecStart={{ splunk_home }}/bin/splunk _internal_launch_under_systemd
+          WorkingDirectory={{ splunk_home }}
+          KillMode=mixed
+          KillSignal=SIGINT
+          TimeoutStopSec=360
+          Restart=on-failure
+          RestartSec=10s
+          Environment="SPLUNK_HOME={{ splunk_home }}"
+          Environment="LD_LIBRARY_PATH="
+          LimitNOFILE=65536
+          LimitNPROC=16000
+          
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start splunkforwarder service
+      systemd:
+        name: splunkforwarder
+        enabled: yes
+        state: started
+
+    - name: Wait for service to stabilize
+      pause:
+        seconds: 15
+
+    - name: Verify forwarder connection
+      shell: "sudo -u splunk {{ splunk_home }}/bin/splunk list forward-server -auth admin:{{ admin_password }}"
+      register: forward_status
+      changed_when: false
+      failed_when: false
+
+    - name: Display forwarder status
+      debug:
+        msg: "{{ forward_status.stdout_lines }}"

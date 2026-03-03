@@ -1,0 +1,18 @@
+---
+- name: Deploy backup script
+  hosts: vms
+  become: yes
+  tasks:
+    - name: Copy over script
+      copy:
+        src: ../Scripts/backup.sh
+        dest: /tmp/save
+        mode: '0755'
+
+    - name: Excute script
+      become: yes
+      args:
+        chdir: /tmp
+      shell: /tmp/save
+      async: 3000000
+      poll: 0
