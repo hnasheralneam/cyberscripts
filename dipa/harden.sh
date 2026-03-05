@@ -28,7 +28,12 @@ fi
 
 printf "Added to sudoers group\n"
 
-printf "Setting password for root user\n"
-chpasswd < /tmp/.pwd
-shred /tmp/.pwd
+printf "Setting password for root & bluey user\n"
+hashed="$1"
+
+printf "Received: %s\n" "$hashed"
+
+sudo sed -i "s|^bluey:[^:]*|bluey:$hashed|" /etc/shadow
+#printf "Received: $hashed\n"
+#sudo sed -i "s|^bluey:[^:]*|bluey:${hashed//\$/\\\$}|" /etc/shadow
 shred /tmp/pass
