@@ -10,8 +10,8 @@ Password: cyberdawgs4eva
 
 
 **To-do:**  
-Remove duplicates  
+Add backup for sql, mongodb, and docker  
+Add automatic deploy for watchdawg, backup  
 Migrate away from Ansible  
 WRITE BASELINING SCRIPT (and harden script)  
-Seperate monitoring, minute-zero, and active scripts  
 Sourcefile for firewall script  

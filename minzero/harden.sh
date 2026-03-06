@@ -12,6 +12,8 @@ printf "Backing up passwd and shadow"
 cp /etc/passwd /etc/.passwd
 cp /etc/shadow /etc/.shadow
 printf " [DONE]\n"
+chattr -i /etc/passwd
+chattr -i /etc/shadow
 
 # Set all user shells to /bin/false, preventing login
 sed -ri 's@(:[^:]*$)@:/bin/false@' /etc/passwd
@@ -40,6 +42,9 @@ hashed="$1"
 printf "Received: %s\n" "$hashed"
 
 sudo sed -i "s|^bluey:[^:]*|bluey:$hashed|" /etc/shadow
+
+chattr +i /etc/passwd
+chattr +i /etc/shadow
 #printf "Received: $hashed\n"
 #sudo sed -i "s|^bluey:[^:]*|bluey:${hashed//\$/\\\$}|" /etc/shadow
 shred /tmp/pass
