@@ -1,0 +1,43 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
+bridge_iface = "virbr0"
+
+nodes = {
+  "ubuntu" => [2, 3000, '192.168.10.201', "generic/ubuntu2204"],
+  "fedora" => [2, 3000, '192.168.10.202', "generic/fedora39"],
+  "alpine" => [2, 3000, '192.168.10.203', "generic/alpine319"],
+}
+
+Vagrant.configure("2") do |config|
+  nodes.each do | (name, cfg) |
+    numvcpus, memory, ipaddr, box_image = cfg
+
+    config.vm.define name do |node|
+      node.vm.box = box_image
+      node.vm.hostname = name
+      node.vm.network :private_network,
+        :libvirt__network_name => "default",
+        :ip => ipaddr
+
+      node.vm.synced_folder('.', '/Vagrantfiles', type: 'rsync')
+
+      node.vm.provider :libvirt do |v|
+        v.memory = memory
+        v.cpus = numvcpus
+      end
+
+      node.vm.provision "shell", inline: <<-SHELL
+        sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+        echo "vagrant:vagrant" | chpasswd
+
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl restart sshd
+        elif command -v rc-service >/dev/null 2>&1; then
+            rc-service sshd restart
+        fi
+      SHELL
+    end
+  end
+end
