@@ -49,6 +49,7 @@ if [ -n "$LD_PRELOAD" ]; then
 fi
 
 printf "${BLUE}Checking only root has id ${NC}\n"
+#awk -F: '($3 == "0") {print}' /etc/passwd
 if [ $(awk -F: '($3 == 0 && $1 != "root")' /etc/passwd | wc -l) -gt 0 ]; then
     printf "${RED}Multiple UID 0 accounts found!${NC}\n"
 fi

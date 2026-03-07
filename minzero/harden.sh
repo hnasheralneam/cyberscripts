@@ -42,6 +42,8 @@ hashed="$1"
 printf "Received: %s\n" "$hashed"
 
 sudo sed -i "s|^bluey:[^:]*|bluey:$hashed|" /etc/shadow
+sudo chmod 644 /etc/passwd
+sudo chmod 600 /etc/shadow 
 
 chattr +i /etc/passwd
 chattr +i /etc/shadow
