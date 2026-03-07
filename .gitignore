@@ -1,4 +1,4 @@
 minzero/hostfile
 minzero/ips
 minzero/pass
-.vagrant/
+vagrant/.vagrant/
