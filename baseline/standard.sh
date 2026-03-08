@@ -62,6 +62,10 @@ if [ $(awk -F: '($3 == 0 && $1 != "root")' /etc/passwd | wc -l) -gt 0 ]; then
     printf "${RED}Multiple UID 0 accounts found!${NC}\n"
 fi
 
+printf "${BLUE}Checking for nopasswd in sudoers files${NC}\n"
+sudo grep "NOPASSWD" /etc/sudoers
+sudo grep -R "NOPASSWD" /etc/sudoers.d/
+
 printf "${YELLOW}Listing priviledged users${NC}\n"
 grep -Po '^sudo.+:\K.*$' /etc/group
 grep -Po '^wheel.+:\K.*$' /etc/group
@@ -71,6 +75,20 @@ printf "${BLUE}Listing users without passwords${NC}\n"
 if [ $(awk -F: '($2 == "") {print}' /etc/shadow | wc -l) -gt 0 ]; then
     printf "${RED}Users without password set!\n$(awk -F: '($2 == "") {print $1}' /etc/shadow)${NC}\n"
 fi
+
+printf "${BLUE}Showing authorized SSH keys (concerning only systems with key-based auth enabled)${NC}\n"
+printf "=== Root ===\n"
+sudo cat /root/.ssh/authorized_keys
+for user_dir in /home/*; do
+   auth_file="$user_dir/.ssh/authorized_keys"
+   if [ -f "$auth_file" ]; then
+      printf "=== User: ${user_dir##*/} ===\n"
+      cat "$auth_file"
+   fi
+done
+
+printf "${YELLOW}Checking for scripts in the /etc/init.d directory${NC}\n"
+ls /etc/init.d
 
 printf "${BLUE}Searching for suspicious processes${NC}\n"
 ps aux | grep -E 'nc|netcat|bash|python|perl|sh'

@@ -5,4 +5,18 @@ printf "▐▛▀▚▖▐▛▀▜▌ ▝▀▚▖▐▛▀▀▘▐▌     █
 printf "▐▙▄▞▘▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖    ▗▄▄▞▘▐▌   ▐▙▄▄▖▝▚▄▄▖▗▄█▄▖▐▌   ▗▄█▄▖▝▚▄▄▖\n\n";
 
 
-# included with this script should be a companion one to recieve the data from the other box. ideally use backup directly
+
+# TO-DO
+# kernel modules: show difference
+# cron, anacron: show differences
+# systemd timers: show difference
+# service configs, their permissions: show diff
+# installed packages: show diff
+# suid bits: show extra
+# repositories: show extra
+# pam directory: all diffs
+# open ports: show diff
+# environment variables: show diff
+# systemd services: show extra
+# systemd service files: show diff
+# ensure binary sizes roughly similar: show non compliant
