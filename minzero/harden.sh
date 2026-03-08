@@ -19,7 +19,11 @@ chattr -i /etc/shadow
 sed -ri 's@(:[^:]*$)@:/bin/false@' /etc/passwd
 
 # Add blueteam user
-useradd bluey -m
+if command -v apk > /dev/null; then
+   adduser bluey -h /home/bluey -s /bin/sh
+else
+   useradd bluey -m -s /bin/sh
+fi
 printf "Added bluey\n"
 rm -rf /home/bluey/*
 rm -rf /home/bluey/.*
@@ -27,12 +31,14 @@ printf "Cleaned up home directory\n"
 
 if getent group wheel >/dev/null; then 
    usermod -aG wheel bluey
+   addgroup bluey wheel
+   if command -v apk > /dev/null; then
+      echo '%wheel ALL=(ALL) ALL' > /etc/sudoers.d/wheel
+      chmod 0440 /etc/sudoers.d/wheel
+   fi
 else
    usermod -aG sudo bluey
 fi
-
-printf "Set bluey shell\n"
-usermod -s /bin/sh bluey
 
 printf "Added to sudoers group\n"
 

@@ -2,6 +2,12 @@
 set -e
 echo "[*] Applying hardened firewall rules..."
 
+if command -v apk > /dev/null; then
+ apk add iptables
+ rc-update add iptables
+ rc-service iptables save
+fi
+
 #precaution
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
