@@ -23,8 +23,8 @@ iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 # --------------------------------------------------
 # Allow inbound traffic ONLY to listening TCP ports
 # --------------------------------------------------
-IN=$(head -n1 port-sources)
-OUT=$(tail -n1 port-sources)
+IN=$(head -n1 /tmp/port-sources)
+OUT=$(tail -n1 /tmp/port-sources)
 
 #INBOUND
 for port in $IN; do

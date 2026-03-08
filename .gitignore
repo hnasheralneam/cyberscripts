@@ -1,4 +1,7 @@
+minzero/.env
 minzero/hostfile
 minzero/ips
 minzero/pass
 vagrant/.vagrant/
+./systems/web/
+./systems/mail/
