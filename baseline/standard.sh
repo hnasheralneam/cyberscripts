@@ -62,6 +62,11 @@ if [ $(awk -F: '($3 == 0 && $1 != "root")' /etc/passwd | wc -l) -gt 0 ]; then
     printf "${RED}Multiple UID 0 accounts found!${NC}\n"
 fi
 
+printf "${BLUE}Checking for passwordless login through PAM${NC}\n"
+if grep -Rq "nullok" /etc/pam.d; then
+   printf "${RED}PASSWORDLESS AUTHENTICATION IS ENABLED IN PAM${NC}\nCheck the /etc/pam.d directory to secure it\n";
+fi
+
 printf "${BLUE}Checking for nopasswd in sudoers files${NC}\n"
 sudo grep "NOPASSWD" /etc/sudoers
 sudo grep -R "NOPASSWD" /etc/sudoers.d/
@@ -109,6 +114,12 @@ atq
 
 printf "${BLUE}Showing systemd timers${NC}\n"
 systemctl list-timers --all
+
+printf "${BLUE}Showing all cron and anacron files${NC}\n"
+cat /etc/crontab # system crontab
+cat /cron*/* # daily, weekly, etc
+cat /var/spool/cron/crontabs # individual users
+cat /etc/anacrontab # works across reboot
 
 printf "${BLUE}Showing files at root of /etc/ dir that are world writable${NC}\n"
 find /etc -maxdepth 1 -perm -o+w -ls

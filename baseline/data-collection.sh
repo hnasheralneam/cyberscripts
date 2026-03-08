@@ -1,75 +1,69 @@
-#!/bin/bash
+#!/bin/sh
 # Script to capture snapshot of initial compitition state
-
-# kernel modules -> lsmod
-# cron, anacron -> check ALL dirs
-# systemd timers -> run command
-# service configs -> /etc
-# installed packages -> distro dependant
-# suid bits -> run command
-# repos -> check location, copy over
-# pam directories -> probably /etc
-# open ports -> ss -tulpn
-# environment variables -> save env
-# systemd services -> run command
-# systemd service files -> probably /etc
-# binary sizes -> diff ls -R
+# Maybe later compare binary sizes
 
 # Ensure running as root
 if [ "$EUID" -ne 0 ]; then
-    echo "[ERROR] This script must be run as root or with sudo."
+    printf "This script requires root privileges."
     exit 1
 fi
 
-BACKUP_DIR=/var/bk
+# Create backup dirs
+BACKUP_DIR=/tmp/bk
 
-mkdir -p $BACKUP_DIR/filesystem
-mkdir -p $BACKUP_DIR/filesystem/etc
-mkdir -p $BACKUP_DIR/filesystem/home
+mkdir -p $BACKUP_DIR/etc
+mkdir -p $BACKUP_DIR/root
+mkdir -p $BACKUP_DIR/home
 
-## Criticial files and directories
-cp -pr /etc/*       $BACKUP_DIR/filesystem/etc/
-cp -pr /home/*      $BACKUP_DIR/filesystem/home/
+## Service configurations and user data
+cp -pr /etc/*  $BACKUP_DIR/filesystem/etc/
+cp -pr /root/* $BACKUP_DIR/filesystem/root
+cp -pr /home/* $BACKUP_DIR/filesystem/home/
 
-## Processes and services
-ps aux    > $BACKUP_DIR/processes-ps_aux.txt
-pstree -p > $BACKUP_DIR/processes-pstree.txt
+## Kernel modules
+lsmod > $BACKUP_DIR/kernelModules
 
+## System services, active and startup
 if [ -d /run/systemd/system ]; then
-    # Systemd stuff
-    systemctl list-units      --type=service --state=running --no-pager > $BACKUP_DIR/services-active_running.txt
-    systemctl list-unit-files --type=service --state=enabled --no-pager > $BACKUP_DIR/services-enabled_autostart.txt
-    systemctl list-units                               --all --no-pager > $BACKUP_DIR/services all_units.txt
+   # Systemd stuff
+   systemctl list-units      --type=service --state=running --no-pager > $BACKUP_DIR/servicesActiveRunning
+   systemctl list-unit-files --type=service --state=enabled --no-pager > $BACKUP_DIR/servicesEnabledAutostart
+   systemctl list-units                               --all --no-pager > $BACKUP_DIR/servicesAllUnits
 else
     # Openrc stuff
-    rc-status --started --manual > $BACKUP_DIR/services-active_running.txt
-    rc-update -v show            > $BACKUP_DIR/services-enabled_autostart.txt
-    rc-update show               > $BACKUP_DIR/services all_units.txt
+    rc-status --started --manual > $BACKUP_DIR/servicesActiveRunning
+    rc-update -v show            > $BACKUP_DIR/servicesEnabledAutostart
+    rc-update show               > $BACKUP_DIR/servicesAllUnits
 fi
 
 ## Packages
 # Alpine
 if [ -x "$(command -v apk)" ];
 then
-    apk info > $BACKUP_DIR/packages-alpine.txt
+    apk info > $BACKUP_DIR/packages
 # Debian
-elif [ -x "$(command -v apt)" ];
+elif [ -x "$(command -v dpkg)" ];
 then
-    dpkg -l > $BACKUP_DIR/packages-debian.txt
+    dpkg -l > $BACKUP_DIR/packages
 # RHEL
-elif [ -x "$(command -v dnf)" ];
+elif [ -x "$(command -v rpm)" ];
 then
-    rpm -qa > $BACKUP_DIR/packages-rhel.txt
+    rpm -qa > $BACKUP_DIR/packages
 else
-    printf "== Unknown package manager ==\n"
+    printf "==> Unknown package manager, skipping\n"
 fi
 
 ## Ports and firewall
-ss -tulpn      > $BACKUP_DIR/listeningports.txt
-iptables -L > $BACKUP_DIR/iptablerules.txt
+ss -tulpn   > $BACKUP_DIR/openPorts
+iptables -L > $BACKUP_DIR/iptablesRules
 
-## Kernel modules
-lsmod > $BACKUP_DIR/kernelmodules.txt
+## Environmental variable
+env > $BACKUP_DIR/environmentalVariables
 
-printf "== Archiving directory... ==\n"
-tar -cpzf ~/bk.tar.gz $BACKUP_DIR
+## SUID bits
+find / -perm -u=s -type f 2>/dev/null > suidbits
+
+## Pack files
+printf "==> Archiving directory...\n"
+tar -cpzf /tmp/baseline.tar.gz $BACKUP_DIR
+printf "==> Done.\n"
