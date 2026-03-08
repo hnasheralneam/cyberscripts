@@ -34,11 +34,19 @@ DG="${C}[1;90m" #DarkGray
 SED_DG="${C}[1;90m&${C}[0m"
 NC="${C}[0m"
 
-printf "${BLUE}Checking for preloaded libraries${NC}\n"
+printf "${LG}GENERAL SYSTEM INFO${NC}\n"
 cat /etc/os-release
 
-printf "$BLUE}Checking open ports${NC}\n"
+printf "${BLUE}Checking for preloaded libraries${NC}\n"
+printf "$LD_PRELOAD\n"
+
+printf "${YELLOW}Is this system time correct?${NC}\n"
+timedatectl
+
+printf "${BLUE}Checking open ports${NC}\n"
 ss -tulpn
+printf "${BLUE}Show processes running on ports${NC}\n"
+sudo lsof -i -P -n
 
 printf "${BLUE}Checking iptable rules${NC}\n"
 iptables -L
@@ -60,37 +68,73 @@ grep -Po '^wheel.+:\K.*$' /etc/group
 printf "${YELLOW}CHECK /etc/sudoers FILE FOR OTHER USERS WITH ROOT ACCESS${NC}\n"
 
 printf "${BLUE}Listing users without passwords${NC}\n"
-if [ $(awk -F: '($2 == "") {print}' /etc/shadow | wc -l) -gt 0]; then
-   printf "${RED}Users without password set!\n$(awk -F: '($2 == "") {print}' /etc/shadow)${NC}\n"
+if [ $(awk -F: '($2 == "") {print}' /etc/shadow | wc -l) -gt 0 ]; then
+    printf "${RED}Users without password set!\n$(awk -F: '($2 == "") {print $1}' /etc/shadow)${NC}\n"
 fi
 
 printf "${BLUE}Searching for suspicious processes${NC}\n"
 ps aux | grep -E 'nc|netcat|bash|python|perl|sh'
 
+printf "${YELLOW}Listing all crontabs${NC}\n"
+users=$(cut -f1 -d: /etc/passwd)
+for u in $users
+do
+  echo "USER: $u"
+  crontab -l -u "$u" 2>/dev/null 
+done
+sudo crontab -l
+cat /etc/cron*/*
+printf "${YELLOW}Also check anacron${NC}\n"
 
-# /etc/passwd
-ONE=$(ls -l /etc/passwd)
-TWO="-rw-r--r--. 1 root root 3734 Dec 15 13:17 /etc/passwd"
-printf "Permissions on /etc/passwd:\n(current) $ONE\n"
-printf "(default) $TWO\n"
-read -p "Override existing permissions (y/n): " CHOICE
-if [ "$CHOICE" == "y" ]; then
-   sudo chmod 666 /etc/passwd
-else
-   echo "Nothing changed."
+printf "${BLUE}Showing at jobs${NC}\n"
+atq
+
+printf "${BLUE}Showing systemd timers${NC}\n"
+systemctl list-timers --all
+
+printf "${BLUE}Showing files at root of /etc/ dir that are world writable${NC}\n"
+find /etc -maxdepth 1 -perm -o+w -ls
+
+printf "${BLUE}Checking Docker/Podman containers${NC}\n"
+if command -v docker >/dev/null 2>&1; then
+   sudo docker ps -a
+elif command -v podman >/dev/null 2>&1; then
+   sudo podman ps -a
 fi
-# chattr +i /etc/passwd
-printf "Locked file.\n"
 
-# printf "If there is an i, the file is immutable: "
-# lsattr /etc/passwd
+printf "${BLUE}Checking package checksums${NC}\n"
+if command -v dpkg &> /dev/null; then
+   dpkg -V | grep -v missing
+else if command -v apk &> /dev/null; then
+   apk verify
+else if command -v rpm &> /dev/null; then
+   rpm -Va | grep -v missing
+fi
 
-# also ask to override if the suid bit is set 
-# show a diff of the files; if different, ask y/n to open the file for editing
+printf "${BLUE}Checking for pwnkit vulnerability${NC}\n"
+polkitVersion=$(systemctl status polkit.service 2>/dev/null | grep version | cut -d " " -f 9)
+if [ "$(apt list --installed 2>/dev/null | grep polkit | grep -c 0.105-26)" -ge 1 ] || [ "$(rpm -qa | grep -i polkit | grep -ic "0.11[3-9]")" -ge 1 ]; then
+   printf "${RED}SYSTEM VULNERABLE TO PWNKIT\n"
+   printf "RUN ${NC}`sudo chmod -s $(which pkexec)` ${RED}to mitigate${NC}\n"
+fi
+
+printf "${BLUE}Starting lynis, redirecting output to /tmp/lynis${NC}\n"
+if command -v dnf &> /dev/null; then
+   sudo dnf install lynis
+else if command -v apt &> /dev/null; then
+   sudo apt install lynis
+else if command -v apk &> /dev/null; then
+   sudo apk install lynis
+if
+nohup lynis audit system > /tmp/lynis 2>&1 &
+
+printf "${BLUE}Starting linpeas, redircting output to /tmp/linpeas${NC}\n"
+curl -o https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh /tmp/lp.sh
+chmod +x /tmp/lp.sh
+nohup lp.sh > /tmp/linpeas 2>&1 &
+
+printf "${LC}Done. Look through the output carefully and check the tool output files${NC}\n"
 
 
-# may be useful to upload a zipped version of the baseline from a vm of the system, including only critical files/dirs, up here for comparison
-# like `cp /etc/ssh/* ~/baseline/etc/ssh/` then `zip ~/baseline` then `sftp vm` then `get baseline` then `sftp compsys` then `put baseline` then `unzip baseline` then run this script
-#
-#
-# use mapfile to read in array of files to montitor
+# TO-DO
+# chkrootkit, rkhunter, clamav
