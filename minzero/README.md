@@ -1,3 +1,6 @@
+# Dependencies:
+GNU Parallel: `sudo apt install parallel`  
+
 # Order of operations:  
 -> YOU NEED TO CREATE A `hostname` FILE  
   -> `hostname` should be in this format:  
