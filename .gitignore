@@ -1,4 +1,5 @@
 minzero/.env
+minzero/deploy.log
 minzero/hostfile
 minzero/ips
 minzero/pass

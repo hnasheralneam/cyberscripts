@@ -67,7 +67,8 @@ is_allowed() {
 # Lock all users except the allowed ones
 for user in $(cut -f1 -d: /etc/passwd); do
     if ! is_allowed "$user"; then
-        passwd -l "$user"
+        printf "Locking $user\n"
+        passwd -q -l "$user"
     fi
 done
 

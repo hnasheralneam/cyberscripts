@@ -7,7 +7,8 @@ else
    exit
 fi
 
-
+LOGFILE="deploy.log"
+exec > >(tee -a "$LOGFILE") 2>&1
 
 printf '#!/bin/sh\nprintf '\""$OLDPASS\\\n"\" > pass
 chmod +x pass
@@ -24,10 +25,7 @@ deploy_host() {
   printf "[$DIR] Begin system $IP with user $USER\n"
   AbsPath=$(realpath ../systems/)
 
-  sshpass -p "$OLDPASS" scp -o StrictHostKeyChecking=no harden.sh "$USER"@"$IP":/tmp/harden.sh
-  sshpass -p "$OLDPASS" scp pass "$USER"@"$IP":/tmp/pass
-  sshpass -p "$OLDPASS" scp autofirewall.sh "$USER"@"$IP":/tmp/autofirewall.sh
-  sshpass -p "$OLDPASS" scp "$AbsPath/$DIR/port-sources" "$USER"@"$IP":/tmp/port-sources
+  sshpass -p "$OLDPASS" scp harden.sh pass autofirewall.sh "$AbsPath/$DIR/port-sources" "$USER@$IP:/tmp/"
 
   printf "[$DIR] starting autofirewall.sh\n"
   sshpass -p "$OLDPASS" ssh "$USER"@"$IP" 'SUDO_ASKPASS="/tmp/pass" sudo -A /tmp/autofirewall.sh' < /dev/null \
