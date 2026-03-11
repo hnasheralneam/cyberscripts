@@ -40,6 +40,9 @@ cat /etc/os-release
 printf "${BLUE}Checking for preloaded libraries${NC}\n"
 printf "$LD_PRELOAD\n"
 
+printf "${BLUE}Showing PATH variable (check for suspicious dirs)${NC}\n"
+printf "$PATH\n"
+
 printf "${YELLOW}Is this system time correct?${NC}\n"
 timedatectl
 

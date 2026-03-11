@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Script to capture snapshot of initial compitition state
 
 # Ensure running as root

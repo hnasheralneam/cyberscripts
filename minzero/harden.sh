@@ -65,11 +65,12 @@ is_allowed() {
 }
 
 # Lock all users except the allowed ones
-for user in $(cut -f1 -d: /etc/passwd); do
-    if ! is_allowed "$user"; then
-        printf "Locking $user\n"
-        passwd -q -l "$user"
+awk -F: '$3 < 1000 {print $1}' /etc/passwd | while read user; do
+    if is_allowed "$user"; then
+        continue
     fi
+
+    sudo sed -i "s/^\($user:\)\([^!]\)/\1!\2/" /etc/shadow
 done
 
 

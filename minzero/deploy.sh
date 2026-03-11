@@ -15,6 +15,9 @@ chmod +x pass
 chmod +x harden.sh
 chmod +x autofirewall.sh
 
+printf "=== Compressing scripts ===\n"
+tar -cvf ../minzero.tar ../backup.sh ../c2scanner.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules
+
 #run with sudo
 deploy_host() {
   line="$1"
@@ -25,7 +28,8 @@ deploy_host() {
   printf "[$DIR] Begin system $IP with user $USER\n"
   AbsPath=$(realpath ../systems/)
 
-  sshpass -p "$OLDPASS" scp harden.sh pass autofirewall.sh "$AbsPath/$DIR/port-sources" "$USER@$IP:/tmp/"
+
+  sshpass -p "$OLDPASS" scp harden.sh pass autofirewall.sh $(realpath ../minzero.tar) "$AbsPath/$DIR/port-sources" "$USER@$IP:/tmp/"
 
   printf "[$DIR] starting autofirewall.sh\n"
   sshpass -p "$OLDPASS" ssh "$USER"@"$IP" 'SUDO_ASKPASS="/tmp/pass" sudo -A /tmp/autofirewall.sh' < /dev/null \
@@ -36,6 +40,7 @@ deploy_host() {
   sshpass -p "$OLDPASS" ssh "$USER"@"$IP" "SUDO_ASKPASS=/tmp/pass sudo -A /tmp/harden.sh '$HASH'" < /dev/null \
     2>&1 | sed "s/^/[$DIR] /"
   printf "[$DIR] done harden.sh\n"
+
   printf "[$DIR] All done\n"
 }
 export -f deploy_host
