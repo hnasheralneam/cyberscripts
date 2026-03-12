@@ -23,12 +23,39 @@ printf "▐▙▄▞▘▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▙▄▄�
 
 # require input in form of system name
 
-printf "Running data collection script on this compromised system\n"
+RED="${C}[1;31m"
+GREEN="${C}[1;32m"
+YELLOW="${C}[1;33m"
+BLUE="${C}[1;34m"
+LG="${C}[1;37m"
+NC="${C}[0m"
+
+interact() {
+   printf "%s " "${LG}Press enter to continue${NC}\n"
+   read ans
+}
+
+printf "${BLUE}==> Running data collection script on this compromised system${NC}\n"
 chmod +x data-collection.sh
 ./data-collection.sh
 
-printf "Decompressing files\n"
+printf "${BLUE}==> Decompressing files${NC}\n"
 tar -xpzf * ../$SYSTEM/baseline.tar.gz ../$SYSTEM-clean
 tar -xpzf * /tmp/baseline.tar.gz ../$SYSTEM-dirty
 
+CLEAN=$(realpath ../$SYSTEM-clean)
+DIRTY=$(realpath ../$SYSTEM-dirty)
 
+interact
+
+printf "${BLUE}Showing kernel modules${NC}\n"
+diff -y $CLEAN/kernelModules $DIRTY/kernelModules
+
+interact
+
+printf "${BLUE}Showing active services${NC}\n"
+diff -y $CLEAN/servicesActiveRunning $DIRTY/servicesActiveRunning
+printf "${BLUE}Showing startup services${NC}\n"
+diff -y $CLEAN/servicesEnabledAutostart $DIRTY/servicesEnabledAutostart
+
+interact

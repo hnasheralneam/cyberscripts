@@ -1,10 +1,11 @@
 #!/bin/sh
+# When auditd rules are triggered, sends a discord notification
 
 # Configuration
 SOCKET_PATH="/var/run/audispd_events"
 ALERT_KEY1="recon"
 ALERT_KEY2="susp_activity"
-webhook=""
+webhook="" # YOU NEED TO FILL THIS VARIABLE TO MAKE THE PROGRAM WORK
 echo "Starting Auditd Socket Listener..."
 
 # -U is for Unix Socket. 

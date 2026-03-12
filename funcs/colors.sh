@@ -25,51 +25,11 @@ SED_DG="${C}[1;90m&${C}[0m"
 NC="${C}[0m"
 UNDERLINED="${C}[5m"
 ITALIC="${C}[3m"
+
 printf ${RED}
-if [[ $EUID -ne 0 ]]; then
-   echo "Rerun with sudo"
-   exit 1
-fi
+printf "hi here's some text\n"
 printf ${NC}
 printf ${BLUE}
-echo "=== OS Version ==="
+printf "=== OS Version ===\n"
 uname -a
 printf ${NC}
-echo
-printf ${LIGHT_CYAN}
-echo "=== Open Ports ==="
-sudo ss -tulpn
-printf ${NC}
-echo
-printf ${YELLOW}
-echo "=== Sudoers ==="
-grep -Po '^sudo.+:\K.*$' /etc/group
-grep -Po '^wheel.+:\K.*$' /etc/group
-printf ${NC}
-echo
-printf ${GREEN}
-echo "=== All users with shell ==="
-getent passwd | awk -F: '$7 !~ /(nologin|false|sync|halt|shutdown)$/ {print $1, $7}'
-printf ${NC}
-echo
-printf ${LG}
-echo "=== Current iptable rules ==="
-sudo iptables -L
-printf ${NC}
-echo
-printf ${BLUE}
-echo "=== Cronjobs ==="
-users=$(cut -f1 -d: /etc/passwd)
-for u in $users
-do
-  echo "---[ USER: $u ]---"
-  crontab -l -u "$u" 2>/dev/null 
-done
-sudo crontab -l
-cat /etc/cron*/*
-printf ${NC}
-printf ${RED_YELLOW}
-echo "=== SUID bits ==="
-sudo find / -perm "/u=s,g=s" -type f 2>/dev/null
-printf ${NC}
-echo

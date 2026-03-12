@@ -150,6 +150,9 @@ if [ "$(apt list --installed 2>/dev/null | grep polkit | grep -c 0.105-26)" -ge 
    printf "RUN ${NC}`sudo chmod -s $(which pkexec)` ${RED}to mitigate${NC}\n"
 fi
 
+printf "${YELLOW}Checking for executables and scripts in /etc${NC}\n"
+find /etc -type f -executable
+
 printf "${BLUE}Starting lynis, redirecting output to /tmp/lynis${NC}\n"
 if command -v dnf &> /dev/null; then
    sudo dnf install lynis
