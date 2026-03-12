@@ -6,3 +6,5 @@ minzero/pass
 vagrant/.vagrant/
 ./systems/web/
 ./systems/mail/
+*.tar
+*.*.swp

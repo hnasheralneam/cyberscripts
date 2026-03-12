@@ -47,9 +47,9 @@ hashed="$1"
 
 printf "Received: %s\n" "$hashed"
 
-sudo sed -i "s|^bluey:[^:]*|bluey:$hashed|" /etc/shadow
-sudo chmod 644 /etc/passwd
-sudo chmod 600 /etc/shadow 
+sed -i "s|^bluey:[^:]*|bluey:$hashed|" /etc/shadow
+chmod 644 /etc/passwd
+chmod 600 /etc/shadow 
 
 # List of users to keep unlocked
 ALLOWED_USERS="nobody bluey"
@@ -70,7 +70,7 @@ awk -F: '$3 < 1000 {print $1}' /etc/passwd | while read user; do
         continue
     fi
 
-    sudo sed -i "s/^\($user:\)\([^!]\)/\1!\2/" /etc/shadow
+    sed -i "s/^\($user:\)\([^!]\)/\1!\2/" /etc/shadow
 done
 
 
