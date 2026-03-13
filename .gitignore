@@ -4,8 +4,8 @@ minzero/hostfile
 minzero/ips
 minzero/pass
 testing/.vagrant/
-./systems/web/
-./systems/mail/
+./systems/web/*
+./systems/mail/*
 *.tar
 *.*.swp
 /*/*.*.swp
