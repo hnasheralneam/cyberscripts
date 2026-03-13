@@ -3,7 +3,7 @@ minzero/deploy.log
 minzero/hostfile
 minzero/ips
 minzero/pass
-vagrant/.vagrant/
+testing/.vagrant/
 ./systems/web/
 ./systems/mail/
 *.tar
