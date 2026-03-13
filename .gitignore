@@ -8,3 +8,4 @@ vagrant/.vagrant/
 ./systems/mail/
 *.tar
 *.*.swp
+/*/*.*.swp

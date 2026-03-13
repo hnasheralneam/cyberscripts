@@ -3,25 +3,10 @@ printf "▗▄▄▖  ▗▄▖  ▗▄▄▖▗▄▄▄▖▗▖   ▗▄▄�
 printf "▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌   ▐▌     █  ▐▛▚▖▐▌▐▌       ▐▌   ▐▌ ▐▌▐▌   ▐▌     █  ▐▌     █  ▐▌   \n";
 printf "▐▛▀▚▖▐▛▀▜▌ ▝▀▚▖▐▛▀▀▘▐▌     █  ▐▌ ▝▜▌▐▛▀▀▘     ▝▀▚▖▐▛▀▘ ▐▛▀▀▘▐▌     █  ▐▛▀▀▘  █  ▐▌   \n";
 printf "▐▙▄▞▘▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖    ▗▄▄▞▘▐▌   ▐▙▄▄▖▝▚▄▄▖▗▄█▄▖▐▌   ▗▄█▄▖▝▚▄▄▖\n\n";
-
-
+printf " ====================================================================== v0.1.0 ===== \n\n";
 
 # TO-DO
-# kernel modules: show difference
-# service configs, their permissions: show diff
-# installed packages: show diff
-# suid bits: show extra
-# repositories: show extra
-# pam directory: all diffs
-# open ports: show diff
-# environment variables: show diff
-# systemd services: show extra
-# systemd service files: show diff
-# ensure binary sizes roughly similar: show non compliant
-#
-# make sure to run diff on ALL pam files!
-
-# require input in form of system name
+# all checking for the /etc/ dir (especially pam)
 
 RED="${C}[1;31m"
 GREEN="${C}[1;32m"
@@ -29,6 +14,9 @@ YELLOW="${C}[1;33m"
 BLUE="${C}[1;34m"
 LG="${C}[1;37m"
 NC="${C}[0m"
+
+SYSTEM_NAME=$1
+printf "\nStarting for system $1\n\n"
 
 interact() {
    printf "%s " "${LG}Press enter to continue${NC}\n"
@@ -46,6 +34,8 @@ tar -xpzf * /tmp/baseline.tar.gz ../$SYSTEM-dirty
 CLEAN=$(realpath ../$SYSTEM-clean)
 DIRTY=$(realpath ../$SYSTEM-dirty)
 
+printf "${BLUE}==> Starting interactive baselining script.\nClean system is on the left, this system on the right\n"
+
 interact
 
 printf "${BLUE}Showing kernel modules${NC}\n"
@@ -59,3 +49,21 @@ printf "${BLUE}Showing startup services${NC}\n"
 diff -y $CLEAN/servicesEnabledAutostart $DIRTY/servicesEnabledAutostart
 
 interact
+
+printf "${BLUE}Showing installed packages${NC}\n"
+diff -y $CLEAN/packages $DIRTY/packages
+
+interact 
+
+printf "${BLUE}Showing suid bits${NC}\n"
+diff -y $CLEAN/suidbits $DIRTY/suidbits
+
+interact
+
+printf "${BLUE}Showing open ports${NC}\n"
+diff -y $CLEAN/openPorts $DIRTY/openPorts
+
+interact
+
+printf "${BLUE}Showing environmental variable${NC}\n"
+diff -y $CLEAN/environmentalVariables $DIRTY/environmentalVariables
