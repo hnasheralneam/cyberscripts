@@ -1,8 +1,8 @@
 #!/bin/sh
 # Like c2scanner but ANGRY
+# It will murder (in cold blood!) any process attempting to reach out to the world
 
 mkdir -p scans
-
 
 FNAME="$(date +%s)"
 FNAME_LAST="$(date +%s)ProMax"

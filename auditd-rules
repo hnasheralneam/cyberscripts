@@ -3,36 +3,13 @@
 #    / /| |/ / / / __  / / __/ __  /
 #   / ___ / /_/ / /_/ / / /_/ /_/ /
 #  /_/  |_\__,_/\__,_/_/\__/\__,_/
-#
 # Linux Audit Daemon - Best Practice Configuration
-# /etc/audit/audit.rules
-#
-# Compiled by Florian Roth
-#
-# Created  : 2017/12/05
-# Modified : 2023/01/25
-#
-# Based on rules published here:
-#   Gov.uk auditd rules
-#   	https://github.com/gds-operations/puppet-auditd/pull/1
-# 	CentOS 7 hardening
-# 		https://highon.coffee/blog/security-harden-centos-7/#auditd---audit-daemon
-# 	Linux audit repo
-# 		https://github.com/linux-audit/audit-userspace/tree/master/rules
-# 	Auditd high performance linux auditing
-# 		https://linux-audit.com/tuning-auditd-high-performance-linux-auditing/
-#
-# Further rules
-# 	For PCI DSS compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-pci-dss-v31.rules
-# 	For NISPOM compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-nispom.rules
+# Original compiled by Florian Roth
 
 # Remove any existing rules
 -D
 
 # Buffer Size
-## Feel free to increase this if the machine panic's
 -b 8192
 
 # Failure Mode
@@ -298,24 +275,6 @@
 -w /usr/local/bin/xfreerdp -p x -k susp_activity
 -w /usr/bin/nmap -p x -k susp_activity
 
-### atftpd
-### https://sourceforge.net/projects/atftp/
-### https://github.com/madmartin/atftp
-### atftp is a client/server implementation of the TFTP protocol that implements RFCs 1350, 2090, 2347, 2348, 2349 and 7440. 
-### The server is multi-threaded and the client presents a friendly interface using libreadline.
-### T1133_External_Remote_Services
--w /usr/bin/atftpd -p x -k susp_activity
--w /usr/sbin/atftpd -p x -k susp_activity
-
--w /usr/bin/in.tftpd -p x -k susp_activity
--w /usr/sbin/in.tftpd -p x -k susp_activity
-
--w /lib/systemd/system/atftpd.service -k susp_activity
--w /usr/lib/systemd/system/atftpd.service -k susp_activity
-
--w /lib/systemd/system/atftpd.socket -k susp_activity
--w /usr/lib/systemd/system/atftpd.socket -k susp_activity
-
 ## sssd
 -a always,exit -F path=/usr/libexec/sssd/p11_child -F perm=x -F auid>=500 -F auid!=4294967295 -k T1078_Valid_Accounts
 -a always,exit -F path=/usr/libexec/sssd/krb5_child -F perm=x -F auid>=500 -F auid!=4294967295 -k T1078_Valid_Accounts
@@ -326,42 +285,6 @@
 ## vte-2.91
 -a always,exit -F path=/lib64/vte-2.91/gnome-pty-helper -F perm=x -F auid>=500 -F auid!=4294967295 -k T1078_Valid_Accounts
 -a always,exit -F path=/usr/lib64/vte-2.91/gnome-pty-helper -F perm=x -F auid>=500 -F auid!=4294967295 -k T1078_Valid_Accounts
-
-## T1002 Data Compressed
-
--w /usr/bin/zip -p x -k Data_Compressed
--w /usr/bin/gzip -p x -k Data_Compressed
--w /usr/bin/tar -p x -k Data_Compressed
--w /usr/bin/bzip2 -p x -k Data_Compressed
-
--w /usr/bin/lzip -p x -k Data_Compressed
--w /usr/local/bin/lzip -p x -k Data_Compressed
-
--w /usr/bin/lz4 -p x -k Data_Compressed
--w /usr/local/bin/lz4 -p x -k Data_Compressed
-
--w /usr/bin/lzop -p x -k Data_Compressed
--w /usr/local/bin/lzop -p x -k Data_Compressed
-
--w /usr/bin/plzip -p x -k Data_Compressed
--w /usr/local/bin/plzip -p x -k Data_Compressed
-
--w /usr/bin/pbzip2 -p x -k Data_Compressed
--w /usr/local/bin/pbzip2 -p x -k Data_Compressed
-
--w /usr/bin/lbzip2 -p x -k Data_Compressed
--w /usr/local/bin/lbzip2 -p x -k Data_Compressed
-
--w /usr/bin/pixz -p x -k Data_Compressed
--w /usr/local/bin/pixz -p x -k Data_Compressed
-
--w /usr/bin/pigz -p x -k Data_Compressed
--w /usr/local/bin/pigz -p x -k Data_Compressed
--w /usr/bin/unpigz -p x -k Data_Compressed
--w /usr/local/bin/unpigz -p x -k Data_Compressed
-
--w /usr/bin/zstd -p x -k Data_Compressed
--w /usr/local/bin/zstd -p x -k Data_Compressed
 
 ## Added to catch netcat on Ubuntu
 -w /bin/nc.openbsd -p x -k susp_activity
@@ -379,9 +302,6 @@
 -w /usr/sbin/traceroute -p x -k sbin_susp
 -w /usr/sbin/ufw -p x -k sbin_susp
 
-### kde4
--a always,exit -F path=/usr/libexec/kde4/kpac_dhcp_helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k T1078_Valid_Accounts
--a always,exit -F path=/usr/libexec/kde4/kdesud -F perm=x -F auid>=1000 -F auid!=4294967295 -k T1078_Valid_Accounts
 
 ## dbus-send invocation
 ### may indicate privilege escalation CVE-2021-3560
@@ -457,13 +377,9 @@
 # RPM (Redhat/CentOS)
 -w /usr/bin/rpm -p x -k software_mgmt
 -w /usr/bin/yum -p x -k software_mgmt
-
-# DNF (Fedora/RedHat 8/CentOS 8)
 -w /usr/bin/dnf -p x -k software_mgmt
 
 # YAST/Zypper/RPM (SuSE)
--w /sbin/yast -p x -k software_mgmt
--w /sbin/yast2 -p x -k software_mgmt
 -w /bin/rpm -p x -k software_mgmt
 -w /usr/bin/zypper -k software_mgmt
 
@@ -472,34 +388,8 @@
 -w /usr/bin/apt -p x -k software_mgmt
 -w /usr/bin/apt-add-repository -p x -k software_mgmt
 -w /usr/bin/apt-get -p x -k software_mgmt
--w /usr/bin/aptitude -p x -k software_mgmt
--w /usr/bin/wajig -p x -k software_mgmt
 -w /usr/bin/snap -p x -k software_mgmt
 
-# PIP(3) (Python installs)
--w /usr/bin/pip -p x -k third_party_software_mgmt
--w /usr/local/bin/pip -p x -k third_party_software_mgmt
--w /usr/bin/pip3 -p x -k third_party_software_mgmt
--w /usr/local/bin/pip3 -p x -k third_party_software_mgmt
--w /usr/bin/pipx -p x -k third_party_software_mgmt
--w /usr/local/bin/pipx -p x -k third_party_software_mgmt
-
-# Ruby (RubyGems installs)
-## T1072 third party software
-## https://rubygems.org
--w /usr/bin/gem -p x -k third_party_software_mgmt
-
-# LuaRocks (Lua installs)
-## T1072 third party software
-## https://luarocks.org
--w /usr/bin/luarocks -p x -k third_party_software_mgmt
-
-# Pacman (Arch Linux)
-## https://wiki.archlinux.org/title/Pacman
-## T1072 third party software
--w /etc/pacman.conf -p x -k third_party_software_mgmt
--w /etc/pacman.d -p x -k third_party_software_mgmt
-   
 # Special Software ------------------------------------------------------------
 
 ## Docker
@@ -514,65 +404,14 @@
 -w /usr/lib/systemd/system/docker.service -k docker
 -w /usr/lib/systemd/system/docker.socket -k docker
 
-## Virtualization stuff
--w /usr/bin/qemu-system-x86_64 -p x -k qemu-system-x86_64
--w /usr/bin/qemu-img -p x -k qemu-img
--w /usr/bin/qemu-kvm -p x -k qemu-kvm
--w /usr/bin/qemu -p x -k qemu
--w /usr/bin/virtualbox -p x -k virtualbox
--w /usr/bin/virt-manager -p x -k virt-manager
--w /usr/bin/VBoxManage -p x -k VBoxManage
-
 # ipc system call
 # /usr/include/linux/ipc.h
 
-## msgctl
-#-a always,exit -S ipc -F a0=14 -k Inter-Process_Communication
-## msgget
-#-a always,exit -S ipc -F a0=13 -k Inter-Process_Communication
-## Use these lines on x86_64, ia64 instead
--a always,exit -F arch=b64 -S msgctl -k Inter-Process_Communication
--a always,exit -F arch=b64 -S msgget -k Inter-Process_Communication
-
-## semctl
-#-a always,exit -S ipc -F a0=3 -k Inter-Process_Communication
-## semget
-#-a always,exit -S ipc -F a0=2 -k Inter-Process_Communication
-## semop
-#-a always,exit -S ipc -F a0=1 -k Inter-Process_Communication
-## semtimedop
-#-a always,exit -S ipc -F a0=4 -k Inter-Process_Communication
-## Use these lines on x86_64, ia64 instead
--a always,exit -F arch=b64 -S semctl -k Inter-Process_Communication
--a always,exit -F arch=b64 -S semget -k Inter-Process_Communication
--a always,exit -F arch=b64 -S semop -k Inter-Process_Communication
--a always,exit -F arch=b64 -S semtimedop -k Inter-Process_Communication
-
-## shmctl
-#-a always,exit -S ipc -F a0=24 -k Inter-Process_Communication
-## shmget
-#-a always,exit -S ipc -F a0=23 -k Inter-Process_Communication
-## Use these lines on x86_64, ia64 instead
--a always,exit -F arch=b64 -S shmctl -k Inter-Process_Communication
--a always,exit -F arch=b64 -S shmget -k Inter-Process_Communication
 
 # High Volume Events ----------------------------------------------------------
 
-## Disable these rules if they create too many events in your environment
-
-## Common Shells
-#-w /bin/bash -p x -k susp_shell
-#-w /bin/dash -p x -k susp_shell
-#-w /bin/busybox -p x -k susp_shell
-#-w /bin/zsh -p x -k susp_shell
-#-w /bin/sh -p x -k susp_shell
-#-w /bin/ksh -p x -k susp_shell
-
 ## Root command executions
 -a always,exit -F arch=b64 -F euid=0 -F auid>=1000 -F auid!=-1 -S execve -k rootcmd
-
-## File Deletion Events by User
--a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=-1 -k delete
 
 ## File Access
 ### Unauthorized Access (unsuccessful)
@@ -586,15 +425,3 @@
 ### Unsuccessful Modification
 -a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
 -a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
-##
-## 32bit ABI Exploitation
-### https://github.com/linux-audit/audit-userspace/blob/c014eec64b3a16c004f4a75e5792a4ac2fcc0df2/rules/21-no32bit.rules
-### If you are on a 64 bit platform, everything _should_ be running
-### in 64 bit mode. This rule will detect any use of the 32 bit syscalls
-### because this might be a sign of someone exploiting a hole in the 32
-### bit ABI.
--a always,exit -F arch=b32 -S all -k 32bit_abi
-
-# Make The Configuration Immutable --------------------------------------------
-
-##-e 2

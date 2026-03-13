@@ -1,8 +1,3 @@
-#!/bin/sh
-###########################################
-#---------------) Colors (----------------#
-###########################################
-C=$(printf '\033')
 RED="${C}[1;31m"
 SED_RED="${C}[1;31m&${C}[0m"
 GREEN="${C}[1;32m"
@@ -25,11 +20,3 @@ SED_DG="${C}[1;90m&${C}[0m"
 NC="${C}[0m"
 UNDERLINED="${C}[5m"
 ITALIC="${C}[3m"
-
-printf ${RED}
-printf "hi here's some text\n"
-printf ${NC}
-printf ${BLUE}
-printf "=== OS Version ===\n"
-uname -a
-printf ${NC}
