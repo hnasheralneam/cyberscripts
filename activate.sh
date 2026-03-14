@@ -31,6 +31,7 @@ fi
 printf "====> Applying rules\n"
 cp auditd-rules /etc/audit/rules.d/standard.rules
 chmod 0600 /etc/audit/rules.d/standard.rules
+chattr +i /etc/audit/rules.d/standard.rules
 
 printf "====> Restarting service\n"
 if command -v systemctl &> /dev/null; then

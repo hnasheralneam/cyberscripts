@@ -6,6 +6,7 @@ nodes = {
   "ubuntu" => [2, 3000, '192.168.10.201', "generic/ubuntu2204"],
   "fedora" => [2, 3000, '192.168.10.202', "generic/fedora39"],
   "alpine" => [2, 3000, '192.168.10.203', "generic/alpine319"],
+  "rocky"  => [2, 3000, '192.168.10.204', "generic/rocky9"]
 }
 
 Vagrant.configure("2") do |config|

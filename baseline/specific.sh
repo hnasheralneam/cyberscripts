@@ -7,6 +7,7 @@ printf " ====================================================================== 
 
 # TO-DO
 # all checking for the /etc/ dir (especially pam)
+# do diff -r for directories
 
 RED="${C}[1;31m"
 GREEN="${C}[1;32m"

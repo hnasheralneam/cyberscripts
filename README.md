@@ -6,7 +6,6 @@ We're using Vagrant for spinning up test environments to quickly test scripts ac
 
 ## Documentation
 For information on what the scripts do/how they work/when to use them, visit the docs:
-
 ```
 https://docs.dawgsec.com
 User: team

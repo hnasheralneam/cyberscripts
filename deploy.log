@@ -1,0 +1,12 @@
+chmod: cannot access 'harden.sh': No such file or directory
+chmod: cannot access 'autofirewall.sh': No such file or directory
+=== Compressing scripts ===
+tar: Removing leading `../' from member names
+tar: ../backup.sh: Cannot stat: No such file or directory
+tar: ../c2scanner.sh: Cannot stat: No such file or directory
+tar: ../watchdawg.sh: Cannot stat: No such file or directory
+tar: ../watchdawg-sources: Cannot stat: No such file or directory
+tar: ../auditd-rules: Cannot stat: No such file or directory
+tar: Exiting with failure status due to previous errors
+parallel: Error: Cannot open `hostfile': No such file or directory
+Finished

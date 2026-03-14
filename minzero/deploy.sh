@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ "$1" != "" ] && [ "$2" != "" ]; then
    USER="$1"
    OLDPASS="$2"
@@ -8,7 +8,7 @@ else
 fi
 
 LOGFILE="deploy.log"
-exec > >(tee -a "$LOGFILE") 2>&1
+{
 
 printf '#!/bin/sh\nprintf '\""$OLDPASS\\\n"\" > pass
 chmod +x pass
@@ -18,7 +18,6 @@ chmod +x autofirewall.sh
 printf "=== Compressing scripts ===\n"
 tar -cvf ../minzero.tar ../backup.sh ../c2scanner.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules
 
-#run with sudo
 deploy_host() {
   line="$1"
   IP=$(echo "$line" | cut -d' ' -f1)
@@ -49,3 +48,5 @@ export USER OLDPASS
 parallel -j 10 --line-buffer deploy_host :::: hostfile
 
 printf "Finished\n"
+
+} 2>&1 | tee -a "$LOGFILE"
