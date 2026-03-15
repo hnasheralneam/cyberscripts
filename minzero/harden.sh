@@ -73,6 +73,9 @@ awk -F: '$3 < 1000 {print $1}' /etc/passwd | while read user; do
     sed -i "s/^\($user:\)\([^!]\)/\1!\2/" /etc/shadow
 done
 
+echo "/bin/false file size: "
+ls -lh /bin/false
+
 
 chattr +i /etc/passwd
 chattr +i /etc/shadow

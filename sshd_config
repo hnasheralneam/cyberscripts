@@ -1,0 +1,14 @@
+PermitRootLogin no # this one is really important!
+PasswordAuthentication yes
+IgnoreUserKnownHosts yes
+IgnoreRhosts yes
+PermitEmptyPasswords no
+PubkeyAuthentication no        # ssh keys
+IgnoreRhosts yes
+UsePAM yes
+X11Forwarding no
+UsePrivilegeSeparation sandbox # (if that breaks, change sandbox to yes)
+RSAAuthentication no
+
+ClientAliveInterval 300
+ClientAliveCountMax 0
