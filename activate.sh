@@ -51,7 +51,7 @@ mv /tmp/watchdawg-sources /etc/kernel/sources
 nohup /etc/kernel/watchdawg /etc/kerner/init-state /etc/kernel/sources > /etc/kernel/out 2>&1 &
 
 printf "==> Deploying busybox\n"
-curl -s -L -O https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
+curl -L -O https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
 chmod +x busybox
 mkdir /opt/busybox
 cp busybox /opt/busybox/

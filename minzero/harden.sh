@@ -79,6 +79,7 @@ ls -lh /bin/false
 #CANONICAL CAN ROPEMAXX
 if command -v apt > /dev/null; then
   systemctl stop unattended-upgrades
+  systemctl disable unattended-upgrades
 fi
 
 chattr +i /etc/passwd
