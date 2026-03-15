@@ -18,15 +18,15 @@ chmod +x backup.sh
 
 printf "==> Deploying auditd\n"
 printf "====> Installing auditd\n"
-if command -v auditd &> /dev/null; then
+if command -v auditd > /dev/null; then
    printf "Already installed\n"
 fi
 
-if command -v dnf &> /dev/null; then
+if command -v dnf > /dev/null; then
    dnf install audit -y
-elif command -v apt &> /dev/null; then
+elif command -v apt > /dev/null; then
    apt install auditd -y
-elif command -v apk &> /dev/null; then
+elif command -v apk > /dev/null; then
    apk add audit
 fi
 
@@ -47,12 +47,12 @@ chmod 700 watchdawg.sh
 mkdir -p /etc/kernel
 mv /tmp/watchdawg.sh /etc/kernel/watchdawg
 mv /tmp/watchdawg-sources /etc/kernel/sources
-nohup /etc/kernel/watchdawg /etc/kerner/init-state /etc/kernel/sources > /etc/kernel/out 2>&1 & disown
+nohup /etc/kernel/watchdawg /etc/kerner/init-state /etc/kernel/sources > /etc/kernel/out 2>&1 &
 
 
 
 
-if $DEPLOY_SPLUNK = "yes"; then
+if [ "$DEPLOY_SPLUNK" = "yes" ]; then
    printf "==> Deploying splunk\n"
    addgroup splunk
    groupadd splunk
@@ -63,7 +63,7 @@ if $DEPLOY_SPLUNK = "yes"; then
    # ADD THE REST
 fi
 
-if $DEPLOY_TIMESYNCING = "yes"; then
+if [ "$DEPLOY_TIMESYNCING" = "yes"]; then
    printf "==> Deploying PTP time syncing\n"
    # ADD THE REST
 fi
