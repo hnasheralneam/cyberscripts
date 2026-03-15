@@ -10,7 +10,7 @@ printf "Starting activation script...\n"
 printf "==> Extracting resources\n"
 # backup.sh c2scanner.sh watchdawg.sh watchdawg-sources auditd-rules
 cd /tmp
-tar -xvf minzero.tar
+tar -xzvf minzero.tar.gz
 
 printf "==> Deploying backup\n"
 chmod +x backup.sh
@@ -63,8 +63,8 @@ cp /opt/busybox/false /bin/false
 
 
 printf "==> Changing ssh config\n"
-cp /etc/ssh/sshd_config /tmp/sshd_config.old
-cp /tmp/sshd_config /etc/ssh/ 
+cp /etc/ssh/sshd_config /etc/ssh/.old
+cp sshd_config /etc/ssh/ 
 systemctl restart ssh
 systemctl restart sshd
 chattr +i /etc/ssh/sshd_config
