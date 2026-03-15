@@ -9,3 +9,4 @@ testing/.vagrant/
 *.tar
 *.*.swp
 /*/*.*.swp
+minzero/discordkey

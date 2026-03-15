@@ -16,7 +16,7 @@ chmod +x harden.sh
 chmod +x autofirewall.sh
 
 printf "=== Compressing scripts ===\n"
-tar -cvf ../minzero.tar ../backup.sh ../c2scanner.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules
+tar -cvf ../minzero.tar ../backup.sh ../c2scanner.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules ../baseline/standard.sh ../baseline/specific.sh
 
 deploy_host() {
   line="$1"

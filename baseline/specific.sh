@@ -68,3 +68,16 @@ interact
 
 printf "${BLUE}Showing environmental variable${NC}\n"
 diff -y $CLEAN/environmentalVariables $DIRTY/environmentalVariables
+
+interact
+
+printf "${BLUE}Showing PAM directory configurations\n"
+diff -ry $CLEAN/filesystem/etc/pam.d $DIRTY/filesystem/etc/pam.d
+
+printf "${GREEN}Done with basic baselining.\n"
+printf "Exit the script now or continue to baselines for the entire /etc directory. It is recommended to secure your scored/network-exposed services before continuing.\n\n"
+
+interact
+
+printf "${BLUE}Showing ALL diffs in the /etc directory\n"
+diff -ry $CLEAN/filesystem/etc $DIRTY/filesystem/etc
