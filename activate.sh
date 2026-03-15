@@ -62,6 +62,15 @@ printf "==> Replacing /bin/false\n"
 cp /opt/busybox/false /bin/false
 
 
+printf "==> Changing ssh config\n"
+cp /etc/ssh/sshd_config /tmp/sshd_config.old
+cp /tmp/sshd_config /etc/ssh/ 
+systemctl restart ssh
+systemctl restart sshd
+chattr +i /etc/ssh/sshd_config
+
+printf "[DONE] Log out if using ssh and log back in to activate busybox\n"
+
 #if [ "$DEPLOY_SPLUNK" = "yes" ]; then
 #   printf "==> Deploying splunk\n"
 #   addgroup splunk
