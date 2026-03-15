@@ -28,7 +28,7 @@ deploy_host() {
   AbsPath=$(realpath ../systems/)
 
 
-  sshpass -p "$OLDPASS" scp -o StrictHostKeyChecking=no harden.sh pass autofirewall.sh $(realpath ../activate.sh) $(realpath ../minzero.tar) "$AbsPath/$DIR/port-sources" "$USER@$IP:/tmp/"
+  sshpass -p "$OLDPASS" scp -o StrictHostKeyChecking=no harden.sh pass sshd_config autofirewall.sh $(realpath ../activate.sh) $(realpath ../minzero.tar) "$AbsPath/$DIR/port-sources" "$USER@$IP:/tmp/"
 
   printf "[$DIR] starting autofirewall.sh\n"
   sshpass -p "$OLDPASS" ssh "$USER"@"$IP" 'SUDO_ASKPASS="/tmp/pass" sudo -A /tmp/autofirewall.sh' < /dev/null \
