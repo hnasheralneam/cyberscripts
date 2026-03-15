@@ -73,6 +73,11 @@ awk -F: '$3 < 1000 {print $1}' /etc/passwd | while read user; do
     sed -i "s/^\($user:\)\([^!]\)/\1!\2/" /etc/shadow
 done
 
+printf "==> Changing ssh config\n"
+cp /tmp/sshd_config /etc/ssh/ 
+systemctl restart ssh
+chattr +i /etc/ssh/sshd_config
+
 echo "/bin/false file size: "
 ls -lh /bin/false
 
