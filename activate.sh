@@ -20,6 +20,8 @@ printf "==> Deploying auditd\n"
 printf "====> Installing auditd\n"
 if command -v auditd &> /dev/null; then
    printf "Already installed\n"
+fi
+
 if command -v dnf &> /dev/null; then
    dnf install audit -y
 elif command -v apt &> /dev/null; then
@@ -36,7 +38,7 @@ chattr +i /etc/audit/rules.d/standard.rules
 printf "====> Restarting service\n"
 if command -v systemctl &> /dev/null; then
    systemctl restart auditd
-elif
+elif command -v apk &> /dev/null; then
    rc-service auditd restart
 fi
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 source ./.env
 URL=https://10.67.3.2:8006/
 printf "Reverting Ubuntu\n"

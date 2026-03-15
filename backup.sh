@@ -2,7 +2,7 @@
 # Script to capture snapshot of initial compitition state
 
 # Ensure running as root
-if [ "$EUID" -ne 0 ]; then
+if [ "$(id -u)" -ne 0 ]; then
     echo "[ERROR] This script must be run as root or with sudo."
     exit 1
 fi
