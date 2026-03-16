@@ -11,3 +11,4 @@ testing/.env
 *.*.swp
 /*/*.*.swp
 minzero/discordkey
+minzero.tar.gz

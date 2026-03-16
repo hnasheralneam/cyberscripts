@@ -15,8 +15,8 @@ chmod +x pass
 chmod +x harden.sh
 chmod +x autofirewall.sh
 
-printf "=== Compressing scripts ===\n"
-tar -czvf ../minzero.tar.gz ../c2scanner.sh ../busybox ../sshd_config ../backup.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules
+printf "=== Compressing resoures ===\n"
+tar -czvf ../minzero.tar.gz ../c2scanner.sh ../binaries/busybox ../sshd_config ../backup.sh ../watchdawg.sh ../watchdawg-sources ../auditd-rules
 
 deploy_host() {
   line="$1"
