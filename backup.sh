@@ -12,6 +12,7 @@ BACKUP_DIR=/var/bk
 mkdir -p $BACKUP_DIR/filesystem
 mkdir -p $BACKUP_DIR/filesystem/etc
 mkdir -p $BACKUP_DIR/filesystem/home
+mkdir -p $BACKUP_DIR/filesystem/root
 mkdir -p $BACKUP_DIR/filesystem/var
 mkdir -p $BACKUP_DIR/filesystem/var/www
 mkdir -p $BACKUP_DIR/filesystem/var/log
@@ -20,6 +21,7 @@ mkdir -p $BACKUP_DIR/filesystem/var/spool
 ## Criticial files and directories
 cp -pr /etc/*       $BACKUP_DIR/filesystem/etc/
 cp -pr /home/*      $BACKUP_DIR/filesystem/home/
+cp -pr /root/*      $BACKUP_DIR/filesystem/root/
 cp -pr /var/www/*   $BACKUP_DIR/filesystem/var/www/
 cp -pr /var/log/*   $BACKUP_DIR/filesystem/var/log/
 cp -pr /var/spool/* $BACKUP_DIR/filesystem/var/spool/
