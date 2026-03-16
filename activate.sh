@@ -20,11 +20,11 @@ printf "====> Installing auditd\n"
 if command -v auditd > /dev/null; then
    printf "Already installed\n"
 else
-   if command -v dnf &> /dev/null; then
+   if command -v dnf > /dev/null; then
       dnf install audit -y
-   elif command -v apt &> /dev/null; then
+   elif command -v apt > /dev/null; then
       apt install auditd -y
-   elif command -v apk &> /dev/null; then
+   elif command -v apk > /dev/null; then
       apk add audit
    fi
 fi
