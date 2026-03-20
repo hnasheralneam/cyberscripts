@@ -27,4 +27,6 @@ And check out the README in the `minzero` directory.
 - deploy auditd-notifier in activate
 - migrate from iptables to nftables
 - in standard baseline run linpeas as non-root
+- Windows scripting :(
 - pipe baseline specifc out to a file, and through less
+
