@@ -3,11 +3,11 @@ printf "▗▄▄▖  ▗▄▖  ▗▄▄▖▗▄▄▄▖▗▖   ▗▄▄�
 printf "▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌   ▐▌     █  ▐▛▚▖▐▌▐▌       ▐▌   ▐▌ ▐▌▐▌   ▐▌     █  ▐▌     █  ▐▌   \n";
 printf "▐▛▀▚▖▐▛▀▜▌ ▝▀▚▖▐▛▀▀▘▐▌     █  ▐▌ ▝▜▌▐▛▀▀▘     ▝▀▚▖▐▛▀▘ ▐▛▀▀▘▐▌     █  ▐▛▀▀▘  █  ▐▌   \n";
 printf "▐▙▄▞▘▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖    ▗▄▄▞▘▐▌   ▐▙▄▄▖▝▚▄▄▖▗▄█▄▖▐▌   ▗▄█▄▖▝▚▄▄▖\n\n";
-printf " ====================================================================== v0.1.0 ===== \n\n";
+printf " ====================================================================== v0.1.1 ===== \n\n";
 
-# TO-DO
-# all checking for the /etc/ dir (especially pam)
-# do diff -r for directories
+# Changelog
+# v0.1.1 - add sudoers check
+#        - fixed mismatched directories
 
 RED="${C}[1;31m"
 GREEN="${C}[1;32m"
@@ -16,8 +16,7 @@ BLUE="${C}[1;34m"
 LG="${C}[1;37m"
 NC="${C}[0m"
 
-SYSTEM_NAME=$1
-printf "\nStarting for system $1\n\n"
+printf "\nStarting specific baseline\n\n"
 
 interact() {
    printf "%s " "${LG}Press enter to continue${NC}\n"
@@ -29,11 +28,11 @@ chmod +x data-collection.sh
 ./data-collection.sh
 
 printf "${BLUE}==> Decompressing files${NC}\n"
-tar -xpzf * ../$SYSTEM/baseline.tar.gz ../$SYSTEM-clean
-tar -xpzf * /tmp/baseline.tar.gz ../$SYSTEM-dirty
+tar -xpzf * /tmp/*/baseline.tar.gz /tmp/sys-clean
+tar -xpzf * /tmp/baseline.tar.gz /tmp/sys-dirty
 
-CLEAN=$(realpath ../$SYSTEM-clean)
-DIRTY=$(realpath ../$SYSTEM-dirty)
+CLEAN=$(realpath ../sys-clean)
+DIRTY=$(realpath ../sys-dirty)
 
 printf "${BLUE}==> Starting interactive baselining script.\nClean system is on the left, this system on the right\n"
 
@@ -73,6 +72,13 @@ interact
 
 printf "${BLUE}Showing PAM directory configurations\n"
 diff -ry $CLEAN/filesystem/etc/pam.d $DIRTY/filesystem/etc/pam.d
+
+interact
+
+printf "${BLUE}Showing sudoers file\n"
+diff -r $CLEAN/filesystem/etc/sudoers $DIRTY/filesystem/etc/sudoers
+
+interact
 
 printf "${GREEN}Done with basic baselining.\n"
 printf "Exit the script now or continue to baselines for the entire /etc directory. It is recommended to secure your scored/network-exposed services before continuing.\n\n"

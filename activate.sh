@@ -5,11 +5,17 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then
+   CONNECTED=true
+else
+   CONNECTED=false
+fi
+
 printf "Starting activation script...\n"
 printf "==> Extracting resources\n"
 # backup.sh c2scanner.sh watchdawg.sh watchdawg-sources auditd-rules
 cd /tmp
-tar -xzvf minzero.tar.gz
+tar -xzvf resources.tar.gz
 
 printf "==> Deploying backup\n"
 chmod +x backup.sh
@@ -19,7 +25,7 @@ printf "==> Deploying auditd\n"
 printf "====> Installing auditd\n"
 if command -v auditd > /dev/null; then
    printf "Already installed\n"
-else
+elif [ CONNECTED == true ]; then
    if command -v dnf > /dev/null; then
       dnf install audit -y
    elif command -v apt > /dev/null; then
@@ -50,9 +56,9 @@ nohup /etc/kernel/watchdawg /etc/kerner/init-state /etc/kernel/sources > /etc/ke
 
 printf "==> Deploying busybox\n"
 #curl -k -L -O https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
-chmod +x busybox
+chmod +x /binaries/busybox
 mkdir /opt/busybox
-cp busybox /opt/busybox/
+cp /binaries/busybox /opt/busybox/
 /opt/busybox/busybox --install -s /opt/busybox
 printf 'export PATH=/opt/busybox:$PATH' >> /etc/profile
 export PATH=/opt/busybox:$PATH
@@ -60,12 +66,12 @@ printf "==> Replacing /bin/false\n"
 cp /opt/busybox/false /bin/false
 
 
-printf "==> Changing ssh config\n"
-cp /etc/ssh/sshd_config /etc/ssh/.old
-cp sshd_config /etc/ssh/ 
-systemctl restart ssh
-systemctl restart sshd
-chattr +i /etc/ssh/sshd_config
+#printf "==> Changing ssh config\n"
+#cp /etc/ssh/sshd_config /etc/ssh/.old
+#cp sshd_config /etc/ssh/ 
+#systemctl restart ssh
+#systemctl restart sshd
+#chattr +i /etc/ssh/sshd_config
 
 printf "[DONE] Log out if using ssh and log back in to activate busybox\n"
 

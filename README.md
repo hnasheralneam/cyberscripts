@@ -1,4 +1,4 @@
-# CyberDawgs Automation Suite
+'# CyberDawgs Automation Suite
 Courtesy of Dipa and Hamza  
 
 ## Vagrant
@@ -14,18 +14,27 @@ Password: cyberdawgs4eva
 And check out the README in the `minzero` directory.  
 
 ## To-do
-- Add backup for sql, mongodb, and docker
-- Migrate splunk deploy and time sync deploy from ansible
-- Fix specific baseline script
-- Write fake shell to replace /bin/false (discord ping when used)
-- Test test test test test
-- In-place deploy
-- Upload busybox binary
+- In-place deploy (try localhost on deploy)
+- deploy auditd-notifier in activate
+- apply busybox on systems
+- pipe baseline specific out to a file, and through less
+- deploy runs backup and sends back to system executed from
+- move suid bits to baseline specific
+
+- jumpstart script curled into shell that installs packages and pulls repo + runs deploy
 - Toggle outgoing on and off for package installs in activate
 - Investigate https://github.com/MZBCodes/NCAE-CyberGames/blob/main/Scripts/base_harden.sh
 - Use inotifywait for watchdawg
-- deploy auditd-notifier in activate
-- migrate from iptables to nftables
 - in standard baseline run linpeas as non-root
-- pipe baseline specifc out to a file, and through less
+- Write fake shell to replace /bin/false (discord ping when used) or rbash
 - Windows scripting :(
+
+# To-done  
+- add busybox binary to repo
+- add readme for baselines
+- add linpeas to binaries folder
+- move oldpass and olduser from deploy params to hostfile
+- deploy stops logging success messages if it fails to connect to system
+- add internet check to active and skip blocking install commands if disconnected
+- fix blocking syntax error in baseline/standard.sh
+- use binaries/linpeas.sh instead of pulling from internet

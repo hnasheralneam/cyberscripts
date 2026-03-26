@@ -9,7 +9,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Create backup dirs
-BACKUP_DIR=/tmp/bk
+BACKUP_DIR=/tmp/snapshot
 
 mkdir -p $BACKUP_DIR/etc
 mkdir -p $BACKUP_DIR/root

@@ -182,14 +182,17 @@ interact
 printf "${BLUE}Checking for pwnkit vulnerability${NC}\n"
 polkitVersion=$(systemctl status polkit.service 2>/dev/null | grep version | cut -d " " -f 9)
 if [ "$(apt list --installed 2>/dev/null | grep polkit | grep -c 0.105-26)" -ge 1 ] || [ "$(rpm -qa | grep -i polkit | grep -ic "0.11[3-9]")" -ge 1 ]; then
-   printf "${RED}SYSTEM VULNERABLE TO PWNKIT\n"
-   printf "RUN ${NC}`sudo chmod -s $(which pkexec)` ${RED}to mitigate${NC}\n"
+   printf "${RED}SYSTEM MAY BE VULNERABLE TO PWNKIT\n"
+   printf "RUN ${NC}sudo chmod -s $(which pkexec) ${RED}to mitigate${NC}\n"
 fi
 
 interact
 
-printf "${BLUE}Checking for executables and scripts in /etc${NC}\n"
-find /etc -type f -executable
+printf "${BLUE}Checking for executables and scripts in /etc and /var${NC}\n"
+sudo find /etc -type f -exec file {} + | grep "ELF"
+sudo find /var -type f -exec file {} + | grep "ELF"
+grep -rIl "^#!" /etc
+grep -rIl "^#!" /etc
 
 interact
 
@@ -205,10 +208,10 @@ nohup lynis audit system > /tmp/lynis 2>&1 &
 
 interact
 
-printf "${BLUE}Starting linpeas, redircting output to /tmp/linpeas${NC}\n"
-curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh -o /tmp/lp.sh
-chmod +x /tmp/lp.sh
-nohup /tmp/lp.sh > /tmp/linpeas 2>&1 &
+printf "${BLUE}Starting linpeas, redircting output to /tmp/linpeas, output can be read with less -r${NC}\n"
+#curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh -o /tmp/lp.sh
+chmod +x /tmp/binaries/linpeas.sh
+nohup /tmp/binaries/linpeas.sh > /tmp/linpeas 2>&1 &
 
 interact
 
