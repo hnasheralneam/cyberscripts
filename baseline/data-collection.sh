@@ -11,9 +11,9 @@ fi
 # Create backup dirs
 BACKUP_DIR=/tmp/snapshot
 
-mkdir -p $BACKUP_DIR/etc
-mkdir -p $BACKUP_DIR/root
-mkdir -p $BACKUP_DIR/home
+mkdir -p $BACKUP_DIR/filesystem/etc
+mkdir -p $BACKUP_DIR/filesystem/root
+mkdir -p $BACKUP_DIR/filesystem/home
 
 ## Service configurations and user data
 cp -pr /etc/*  $BACKUP_DIR/filesystem/etc/
@@ -61,7 +61,7 @@ iptables -L > $BACKUP_DIR/iptablesRules
 env > $BACKUP_DIR/environmentalVariables
 
 ## SUID bits
-find / -perm -u=s -type f 2>/dev/null > suidbits
+find / -perm -u=s -type f 2>/dev/null > $BACKUP_DIR/suidbits
 
 ## Pack files
 printf "==> Archiving directory...\n"
