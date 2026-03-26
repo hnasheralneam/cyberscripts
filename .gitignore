@@ -5,8 +5,6 @@ minzero/ips
 minzero/pass
 testing/.vagrant/
 testing/.env
-./systems/web/*
-./systems/mail/*
 *.tar
 *.*.swp
 /*/*.*.swp

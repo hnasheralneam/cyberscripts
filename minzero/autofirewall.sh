@@ -34,8 +34,10 @@ OUT=$(tail -n1 /tmp/port-sources)
 
 #INBOUND
 for port in $IN; do
-    	printf "[+] Allow inbound TCP port $port\n"
+  printf "[+] Allow inbound TCP port $port\n"
 	iptables -A INPUT -p tcp --dport "$port" -m conntrack --ctstate NEW -j ACCEPT
+  printf "[+] Allow inbound UDP port $port\n"
+	iptables -A INPUT -p udp --dport "$port" -m conntrack --ctstate NEW -j ACCEPT
 done
 
 printf "[+] Deny outbound ICMP\n"
@@ -43,14 +45,10 @@ iptables -A OUTPUT -p icmp -j DROP
 
 #OUTBOUND
 for port in $OUT; do
-	if [ "$port" -eq 53 ];
-	then
-    		printf "[+] Allow outbound UDP port $port\n"
-		iptables -A OUTPUT -p udp --dport "$port" -m conntrack --ctstate NEW -j ACCEPT
-	fi
-
-    	printf "[+] Allow outbound TCP port $port\n"
+	  printf "[+] Allow outbound TCP port $port\n"
 	iptables -A OUTPUT -p tcp --dport "$port" -m conntrack --ctstate NEW -j ACCEPT
+  printf "[+] Allow outbound UDP port $port\n"
+	iptables -A OUTPUT -p udp --dport "$port" -m conntrack --ctstate NEW -j ACCEPT
 done
 
 # ICMP
