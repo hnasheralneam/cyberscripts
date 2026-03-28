@@ -14,9 +14,11 @@ Password: cyberdawgs4eva
 And check out the README in the `minzero` directory.  
 
 ## To-do
+- Offline auditd installation
+- Revise audit-rules file
+- Dynamic auditd rule installtion script for watching binaries based on specific paths on different distros
 - In-place deploy (try localhost on deploy)
 - deploy auditd-notifier in activate
-- apply busybox on systems
 - pipe baseline specific out to a file, and through less
 - deploy runs backup and sends back to system executed from
 - move suid bits to baseline specific
@@ -31,6 +33,7 @@ And check out the README in the `minzero` directory.
 
 # To-done  
 - add busybox binary to repo
+- apply busybox on systems
 - add readme for baselines
 - add linpeas to binaries folder
 - move oldpass and olduser from deploy params to hostfile

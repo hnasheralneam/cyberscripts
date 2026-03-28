@@ -33,7 +33,7 @@ deploy_host() {
   HASH=$(echo "$line" | cut -d' ' -f5)
 
   PASSFILE="pass_$DIR"
-  printf '#!/bin/sh\nprintf "%s\n" "'$OLDPASS'" > "$PASSFILE"
+  printf '#!/bin/sh\nprintf "%s\n" "%s"\n' "$OLDPASS" > "$PASSFILE"
   chmod +x "$PASSFILE"
 
   printf "${COLOR}[$DIR]${NC} Begin system $IP with user $USER\n"

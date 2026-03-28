@@ -5,17 +5,10 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then
-   CONNECTED=true
-else
-   CONNECTED=false
-fi
-
 printf "Starting activation script...\n"
 printf "==> Extracting resources\n"
 # backup.sh c2scanner.sh watchdawg.sh watchdawg-sources auditd-rules
 cd /tmp
-tar -xzvf resources.tar.gz
 
 printf "==> Deploying backup\n"
 chmod +x backup.sh
@@ -25,7 +18,7 @@ printf "==> Deploying auditd\n"
 printf "====> Installing auditd\n"
 if command -v auditd > /dev/null; then
    printf "Already installed\n"
-elif [ CONNECTED == true ]; then
+else
    if command -v dnf > /dev/null; then
       dnf install audit -y
    elif command -v apt > /dev/null; then
