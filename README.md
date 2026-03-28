@@ -1,4 +1,4 @@
-'# CyberDawgs Automation Suite
+# CyberDawgs Automation Suite
 Courtesy of Dipa and Hamza  
 
 ## Vagrant
