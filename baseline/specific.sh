@@ -39,44 +39,44 @@ printf "${BLUE}==> Starting interactive baselining script.\nClean system is on t
 interact
 
 printf "${BLUE}Showing kernel modules${NC}\n"
-diff -y $CLEAN/kernelModules $DIRTY/kernelModules
+diff -y $CLEAN/kernelModules $DIRTY/kernelModules | less
 
 interact
 
 printf "${BLUE}Showing active services${NC}\n"
-diff -y $CLEAN/servicesActiveRunning $DIRTY/servicesActiveRunning
+diff -y $CLEAN/servicesActiveRunning $DIRTY/servicesActiveRunning | less
 printf "${BLUE}Showing startup services${NC}\n"
-diff -y $CLEAN/servicesEnabledAutostart $DIRTY/servicesEnabledAutostart
+diff -y $CLEAN/servicesEnabledAutostart $DIRTY/servicesEnabledAutostart | less
 
 interact
 
 printf "${BLUE}Showing installed packages${NC}\n"
-diff -y $CLEAN/packages $DIRTY/packages
+diff -y $CLEAN/packages $DIRTY/packages | less
 
 interact 
 
-printf "${BLUE}Showing suid bits${NC}\n"
-diff -y $CLEAN/suidbits $DIRTY/suidbits
+printf "$BLUE}Showing suid bits${NC}\n"
+diff -y $CLEAN/suidbits $DIRTY/suidbits | less
 
 interact
 
 printf "${BLUE}Showing open ports${NC}\n"
-diff -y $CLEAN/openPorts $DIRTY/openPorts
+diff -y $CLEAN/openPorts $DIRTY/openPorts | less
 
 interact
 
 printf "${BLUE}Showing environmental variable${NC}\n"
-diff -y $CLEAN/environmentalVariables $DIRTY/environmentalVariables
+diff -y $CLEAN/environmentalVariables $DIRTY/environmentalVariables | less
 
 interact
 
 printf "${BLUE}Showing PAM directory configurations\n"
-diff -ry $CLEAN/filesystem/etc/pam.d $DIRTY/filesystem/etc/pam.d
+diff -ry $CLEAN/filesystem/etc/pam.d $DIRTY/filesystem/etc/pam.d | less
 
 interact
 
 printf "${BLUE}Showing sudoers file\n"
-diff -r $CLEAN/filesystem/etc/sudoers $DIRTY/filesystem/etc/sudoers
+diff -r $CLEAN/filesystem/etc/sudoers $DIRTY/filesystem/etc/sudoers | less
 
 interact
 
@@ -86,4 +86,4 @@ printf "Exit the script now or continue to baselines for the entire /etc directo
 interact
 
 printf "${BLUE}Showing ALL diffs in the /etc directory\n"
-diff -ry $CLEAN/filesystem/etc $DIRTY/filesystem/etc
+diff -ry $CLEAN/filesystem/etc $DIRTY/filesystem/etc | less

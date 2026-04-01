@@ -1,4 +1,4 @@
-'# CyberDawgs Automation Suite
+# CyberDawgs Automation Suite
 Courtesy of Dipa and Hamza  
 
 ## Vagrant
@@ -14,13 +14,13 @@ Password: cyberdawgs4eva
 And check out the README in the `minzero` directory.  
 
 ## To-do
-- In-place deploy (try localhost on deploy)
-- deploy auditd-notifier in activate
-- apply busybox on systems
-- pipe baseline specific out to a file, and through less
-- deploy runs backup and sends back to system executed from
-- move suid bits to baseline specific
+- pipe baseline specific out to a file
+- fix diff -y broken on alpine (install diffutils)
+- add script to toggle outgoing networking, for installing packages
 
+- ensure busybox deploy actually works
+- deploy auditd-notifier in activate
+- in-place deploy (try localhost on deploy)
 - jumpstart script curled into shell that installs packages and pulls repo + runs deploy
 - Toggle outgoing on and off for package installs in activate
 - Investigate https://github.com/MZBCodes/NCAE-CyberGames/blob/main/Scripts/base_harden.sh
@@ -29,12 +29,6 @@ And check out the README in the `minzero` directory.
 - Write fake shell to replace /bin/false (discord ping when used) or rbash
 - Windows scripting :(
 
-# To-done  
-- add busybox binary to repo
-- add readme for baselines
-- add linpeas to binaries folder
-- move oldpass and olduser from deploy params to hostfile
-- deploy stops logging success messages if it fails to connect to system
-- add internet check to active and skip blocking install commands if disconnected
-- fix blocking syntax error in baseline/standard.sh
-- use binaries/linpeas.sh instead of pulling from internet
+
+## To-done
+- pipe baseline specific to less
