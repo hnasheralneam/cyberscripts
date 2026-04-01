@@ -27,16 +27,13 @@ deploy_host() {
 
   line="$1"
   DIR=$(echo "$line" | cut -d' ' -f1)
-  IP=$(echo "$line" | cut -d' ' -f2) 
+  IP=$(echo "$line" | cut -d' ' -f2)
   USER=$(echo "$line" | cut -d' ' -f3)
-  OLDPASS=$(echo "$line" | cut -d' ' -f4) 
+  OLDPASS=$(echo "$line" | cut -d' ' -f4)
   HASH=$(echo "$line" | cut -d' ' -f5)
 
   PASSFILE="pass_$DIR"
-  cat <<EOF > "$PASSFILE"
-  #!/bin/sh
-  printf "%s\n" "$OLDPASS"
-EOF
+  printf '#!/bin/sh\nprintf "%s\n" "%s"\n' "$OLDPASS" > "$PASSFILE"
   chmod +x "$PASSFILE"
 
   printf "${COLOR}[$DIR]${NC} Begin system $IP with user $USER\n"
@@ -55,7 +52,7 @@ EOF
       2>&1 | sed "s/^/[$DIR] /"
     printf "${COLOR}[$DIR]${NC} done autofirewall.sh\n"
     printf "${COLOR}[$DIR]${NC} starting harden.sh\n"
-    
+
     # hardening
     sshpass -p "$OLDPASS" ssh "$USER"@"$IP" "SUDO_ASKPASS=/tmp/$PASSFILE sudo -A /tmp/harden.sh '$HASH'" < /dev/null \
       2>&1 | sed "s/^/[$DIR] /"

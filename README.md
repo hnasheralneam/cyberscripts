@@ -1,8 +1,8 @@
 # CyberDawgs Automation Suite
-Courtesy of Dipa and Hamza  
+Courtesy of Dipa and Hamza
 
 ## Vagrant
-We're using Vagrant for spinning up test environments to quickly test scripts across multiple distros; there are more setup details in the `testing` directory.  
+We're using Vagrant for spinning up test environments to quickly test scripts across multiple distros; there are more setup details in the `testing` directory.
 
 ## Documentation
 For information on what the scripts do/how they work/when to use them, visit the docs:
@@ -11,13 +11,15 @@ https://docs.dawgsec.com
 User: team
 Password: cyberdawgs4eva
 ```
-And check out the README in the `minzero` directory.  
+And check out the README in the `minzero` directory.
 
 ## To-do
 - pipe baseline specific out to a file
 - fix diff -y broken on alpine (install diffutils)
-- add script to toggle outgoing networking, for installing packages
-
+- Offline auditd installation
+- Revise audit-rules file
+- Dynamic auditd rule installtion script for watching binaries based on specific paths on different distros
+- deploy runs backup and sends back to system executed from
 - ensure busybox deploy actually works
 - deploy auditd-notifier in activate
 - in-place deploy (try localhost on deploy)
