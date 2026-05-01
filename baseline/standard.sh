@@ -126,7 +126,7 @@ interact
 
 printf "${BLUE}Show all crontabs and anacron${NC}\n"
 cat /etc/crontab # system crontab
-cat /cron*/* # daily, weekly, etc
+cat /etc/cron*/* # daily, weekly, etc
 cat /var/spool/cron/crontabs/* # individual users, debian
 cat /var/spool/cron/* # individual users, fedora
 cat /etc/anacrontab # works across reboot
@@ -196,15 +196,19 @@ grep -rIl "^#!" /etc
 
 interact
 
-printf "${BLUE}Starting lynis, redirecting output to /tmp/lynis${NC}\n"
-if command -v dnf > /dev/null 2>&1; then
-   sudo dnf install lynis -y
-elif command -v apt > /dev/null 2>&1; then
-   sudo apt install lynis -y
-elif command -v apk > /dev/null 2>&1; then
-   sudo apk install lynis
+printf "${BLUE}Would you like to install lynis? (y/n)${NC}\n"
+read INSTALL_LYNIS
+if [ $INSTALL_LYNIS = "y" ]; then
+   printf "${BLUE}Starting lynis, redirecting output to /tmp/lynis${NC}\n"
+   if command -v dnf > /dev/null 2>&1; then
+      sudo dnf install lynis -y
+   elif command -v apt > /dev/null 2>&1; then
+      sudo apt install lynis -y
+   elif command -v apk > /dev/null 2>&1; then
+      sudo apk install lynis
+   fi
+   nohup lynis audit system > /tmp/lynis 2>&1 &
 fi
-nohup lynis audit system > /tmp/lynis 2>&1 &
 
 interact
 
